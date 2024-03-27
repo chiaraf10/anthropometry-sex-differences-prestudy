@@ -1,110 +1,75 @@
 ---
-title: La Palma Earthquakes
+title: Quantifying Sex-differences in Anthropometry - A Bayesian approach
 author:
-  - name: Steve Purves
-    orcid: 0000-0002-0760-5497
-    corresponding: true
-    email: steve@curvenote.com
-    roles:
-      - Investigation
-      - Project administration
-      - Software
-      - Visualization
+  - name: Chiara Fichera
+    orcid: 0000-0000-0000-0000
+    corresponding: False
     affiliations:
-      - Curvenote
-  - name: Rowan Cockett
-    orcid: 0000-0002-7859-8394
+      - Chalmers University of Technology
+  - name: Carol Flannagan
+    orcid: 0000-0000-0000-0000
     corresponding: false
-    roles: []
     affiliations:
-      - Curvenote
+      -  University of Michigan Transportation Research Institute (UMTRI)
+  - name: Jobin John
+    orcid: 0000-0000-0000-0000
+    corresponding: true
+    email: jobin.john@chalmers.se
+    affiliations:
+      - Chalmers University of Technology
 keywords:
-  - La Palma
-  - Earthquakes
-abstract: |
-  In September 2021, a significant jump in seismic activity on the island of La Palma (Canary Islands, Spain) signaled the start of a volcanic crisis that still continues at the time of writing. Earthquake data is continually collected and published by the Instituto Geográphico Nacional (IGN). ...
-plain-language-summary: |
-  Earthquake data for the island of La Palma from the September 2021 eruption is found ...
-key-points:
-  - A web scraping script was developed to pull data from the Instituto Geogràphico Nacional into a machine-readable form for analysis
-  - Earthquake events on La Palma are consistent with the presence of both mantle and crustal reservoirs.
+  - Bayesian regression
+  - Anthropometry
+  - Sex differences
 date: last-modified
 bibliography: references.bib
 citation:
-  container-title: Earth and Space Science
-number-sections: true
+  container-title: Ircobi
+number-sections: False
 jupyter: python3
 ---
 
 ## Introduction
 
-```{python}
-import matplotlib.pyplot as plt
-import numpy as np
-eruptions = [1492, 1585, 1646, 1677, 1712, 1949, 1971, 2021]
-```
+Injury and fatality risks in automotive crashes show varying degrees of differences between men and women. 
+These differences may arise from intrinsic factors such as sex differences in morphology and material properties, or extrinsic factors, such as vehicle environment – seat and restraint system design. Anthropometric measures can influence both these factors. 
+In this paper, we present an approach to evaluate sex differences of anthropometric measures aiming to utilize this information for the development of human surrogates in biomechanics and injury evaluations.
+By virtue of men being taller, and hence heavier, than women, the average anthropometric measures will differ between the sexes. To delineate the influence of sex on an anthropometric measure, we investigate difference between a male and a female in two scenarios. First, we make a comparison between a man and a woman of the same global characteristics, such as height and mass. Second, we compare an average female to an average male.
+Two neck anthropometric measures, i.e. neck link and circumference, are considered to delineate the proposed methodology
 
-```{python}
-#| label: fig-timeline
-#| fig-cap: Timeline of recent earthquakes on La Palma
-#| fig-alt: An event plot of the years of the last 8 eruptions on La Palma.
+## Methods  {#sec-data-methods}
+Because the goal of analysis is to assess the range of plausible values of anthropometry for a very specific and sometimes unusual person (described by stature, BMI, and sex), a purely empirical approach will run into data sparsity. Bayesian regression can model anthropometric data flexibly, and importantly, it can be used to generate posterior predictive draws, which can be treated as though they are a very large population sample, accounting for variation in anthropometry among people of the same size, as well as model uncertainty. Bayesian linear regression was implemented to model neck circumference and link (i.e. vertical distance between tragion and seventh cervical vertebra) using the ANSUR II dataset [1].   
+For the regression, stature, BMI, and sex were selected as predictors. Both height and BMI were centered around their mean  values computed on the entire dataset. The likelihood, μ, was defined as a linear combination of coefficients on these three predictors, where the coefficients were modelled separately for males and females.  The error term was normally distributed with a single variance parameter, σ, that was common for the entire model. The likelihood and prior distribution of the model were defined as follows:	 	     
 
-plt.figure(figsize=(6, 1))
-plt.eventplot(eruptions, lineoffsets=0, linelengths=0.1, color='black')
-plt.gca().axes.get_yaxis().set_visible(False)
-plt.ylabel('')
-plt.show()
-```
-
-```{python}
-#| output: false
-
-avg_years_between_eruptions = np.mean(np.diff(eruptions[:-1]))
-avg_years_between_eruptions
-```
-
-Based on data up to and including 1971, eruptions on La Palma happen every 79.8 years on average.
-
-Studies of the magma systems feeding the volcano, such as @marrero2019, have proposed that there are two main magma reservoirs feeding the Cumbre Vieja volcano; one in the mantle (30-40km depth) which charges and in turn feeds a shallower crustal reservoir (10-20km depth).
-
-Eight eruptions have been recorded since the late 1400s (@fig-timeline).
-
-Data and methods are discussed in @sec-data-methods.
-
-Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
+$$ \textit{y} = \mu + \epsilon $$
 
 $$
-p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
-$$ {#eq-poisson}
+{\mu_{i} =\alpha_{j} + \beta_{j}  (H_i -  H_{mean}  )} + \gamma_{j} (BMI_i - BMI_{mean})
+$$
+with $$ j \in [Male, Female]  $$  given i 
+$$ \alpha_{j} \sim \mathcal{N}(mean,10) $$
+$$ \beta_{j} \sim \mathcal{N}(0,1) $$
+$$ \gamma_{j} \sim \mathcal{N}(0,1) $$
+$$ \sigma \sim Uniform(0,10) $$ 
 
-where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probability of an eruption in the next $t$ years can be calculated.
+The priors $\alpha$ ,$\beta$ and $\gamma$ were normally distributed, and α was centered around mean of the anthropometric variable for the full dataset . The model was fitted using the Markov Chain Monte Carlo (MCMC) No-U-Turn Sampler (NUTS) algorithm.
+First, to make a size-matched comparison, a posterior predictive distribution of anthropometric measures for female and male corresponding to an average women of 1.61 m height and 24 kg/m2 BMI was generated. Second, to make a comparison with an average man, a male posterior predictive distribution corresponding to 1.75 m height and 25 kg/m2 BMI was compared to that of the average female from the previous step. A contrast distribution was computed as the difference of male and the female distribution to compare the two distributions. 
 
-| Name                | Year |
-|---------------------|------|
-| Current             | 2021 |
-| Teneguía            | 1971 |
-| Nambroque           | 1949 |
-| El Charco           | 1712 |
-| Volcán San Antonio  | 1677 |
-| Volcán San Martin   | 1646 |
-| Tajuya near El Paso | 1585 |
-| Montaña Quemada     | 1492 |
+## Initial Findings
 
-: Recent historic eruptions on La Palma {#tbl-history}
+For the neck link, the distributions did not show a distinct difference between the sexes, with the contrast being distributed around zero.  
+For the neck circumference, Figure 1a shows the difference between men and women of the same height and BMI as that of the average female, while Figure 1b shows the comparison between the average male and the average female. The difference between the male and female distributions are shown on the right using a contrast plot. The contrast, and specifically the 95% High Density Interval, lies above zero indicating size-matched men tends to have larger neck circumference than women. (See extended article for more details on the methods and results).
 
-@tbl-history summarises the eruptions recorded since the colonization of the islands by Europeans in the late 1400s.
+::: {layout-nrow=2}
+![Top: Posterior distribution of neck circumference for males and females corresponding to a height and BMI of an average female (Height = 1.61m, BMI = 24Kg/m^2). ](Neck_circumference.png)
 
-![Map of La Palma](images/la-palma-map.png){#fig-map}
+![Bottom: The posterior distribution of neck circumference for an average female is compared to that of an average male (Height = 1.75m, BMI 25Kg/m^2). ](Neck_circumference_Average.png)
+:::
 
-La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (@fig-map).
+## Discussion
 
-{{< embed notebooks/data-screening.qmd#fig-spatial-plot >}}
-
-@fig-spatial-plot shows the location of recent Earthquakes on La Palma.
-
-## Data & Methods {#sec-data-methods}
-
-## Conclusion
+The anthropometric measures  were compared for an average woman and man, as defined in a previous anthropometry recommendation for the US population [2]. Comparisons can also be made for other representative individuals in the population by generating corresponding posterior predictions. As an application of the results, the posterior predictions can used for geometric validation of human body representations. It can also inform the future representations required for the population by identifying anthropometric ranges that are underrepresented or unrepresented in the body region of interest, for example, the female neck in the example above.
+The role of anthropometric sex-differences on causality risks remains an open question. Mechanistic models (such as finite element human body models), that can represent sex-differences, can serve as causal models to investigate the influence of these differences in the future. As a preliminary study, this paper looked at gross neck anthropometric measures given the sex-differences previously reported for whiplash associated disorders [ ]. As future work, this analysis will be extended to all the other body regions to inform the ongoing development of human surrogates, both virtual and physical.
 
 ## References {.unnumbered}
 
