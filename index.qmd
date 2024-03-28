@@ -38,7 +38,7 @@ By virtue of men being taller, and hence heavier, than women, the average anthro
 Two neck anthropometric measures, i.e. neck link and circumference, are considered to delineate the proposed methodology
 
 ## Methods  {#sec-data-methods}
-Because the goal of analysis is to assess the range of plausible values of anthropometry for a very specific and sometimes unusual person (described by stature, BMI, and sex), a purely empirical approach will run into data sparsity. Bayesian regression can model anthropometric data flexibly, and importantly, it can be used to generate posterior predictive draws, which can be treated as though they are a very large population sample, accounting for variation in anthropometry among people of the same size, as well as model uncertainty. Bayesian linear regression was implemented to model neck circumference and link (i.e. vertical distance between tragion and seventh cervical vertebra) using the ANSUR II dataset [1].   
+Because the goal of analysis is to assess the range of plausible values of anthropometry for a very specific and sometimes unusual person (described by stature, BMI, and sex), a purely empirical approach will run into data sparsity. Bayesian regression can model anthropometric data flexibly, and importantly, it can be used to generate posterior predictive draws, which can be treated as though they are a very large population sample, accounting for variation in anthropometry among people of the same size, as well as model uncertainty. Bayesian linear regression was implemented to model neck circumference and link (i.e. vertical distance between tragion and seventh cervical vertebra) using the ANSUR II dataset [@Gordon2012].   
 For the regression, stature, BMI, and sex were selected as predictors. Both height and BMI were centered around their mean  values computed on the entire dataset. The likelihood, μ, was defined as a linear combination of coefficients on these three predictors, where the coefficients were modelled separately for males and females.  The error term was normally distributed with a single variance parameter, σ, that was common for the entire model. The likelihood and prior distribution of the model were defined as follows:	 	     
 
 $$ \textit{y} = \mu + \epsilon $$
@@ -46,7 +46,7 @@ $$ \textit{y} = \mu + \epsilon $$
 $$
 {\mu_{i} =\alpha_{j} + \beta_{j}  (H_i -  H_{mean}  )} + \gamma_{j} (BMI_i - BMI_{mean})
 $$
-with $$ j \in [Male, Female]  $$  given i 
+with $$ j \in [Male, Female] \: given   \: i  $$  
 $$ \alpha_{j} \sim \mathcal{N}(mean,10) $$
 $$ \beta_{j} \sim \mathcal{N}(0,1) $$
 $$ \gamma_{j} \sim \mathcal{N}(0,1) $$
@@ -58,17 +58,17 @@ First, to make a size-matched comparison, a posterior predictive distribution of
 ## Initial Findings
 
 For the neck link, the distributions did not show a distinct difference between the sexes, with the contrast being distributed around zero.  
-For the neck circumference, Figure 1a shows the difference between men and women of the same height and BMI as that of the average female, while Figure 1b shows the comparison between the average male and the average female. The difference between the male and female distributions are shown on the right using a contrast plot. The contrast, and specifically the 95% High Density Interval, lies above zero indicating size-matched men tends to have larger neck circumference than women. (See extended article for more details on the methods and results).
+For the neck circumference, @fig-1 shows the difference between men and women of the same height and BMI as that of the average female, while  @fig-2 shows the comparison between the average male and the average female. The difference between the male and female distributions are shown on the right using a contrast plot. The contrast, and specifically the 95% High Density Interval, lies above zero indicating size-matched men tends to have larger neck circumference than women. (See extended article for more details on the methods and results).
 
 ::: {layout-nrow=2}
-![Top: Posterior distribution of neck circumference for males and females corresponding to a height and BMI of an average female (Height = 1.61m, BMI = 24Kg/m^2). ](Neck_circumference.png)
+![Posterior distribution of neck circumference for males and females corresponding to a height and BMI of an average female (Height = 1.61m, BMI = 24Kg/m^2). ](images/Neck_circumference.png){#fig-1}
 
-![Bottom: The posterior distribution of neck circumference for an average female is compared to that of an average male (Height = 1.75m, BMI 25Kg/m^2). ](Neck_circumference_Average.png)
+![The posterior distribution of neck circumference for an average female is compared to that of an average male (Height = 1.75m, BMI 25Kg/m^2). ](images/Neck_circumference_Average.png){#fig-2}
 :::
 
 ## Discussion
 
-The anthropometric measures  were compared for an average woman and man, as defined in a previous anthropometry recommendation for the US population [2]. Comparisons can also be made for other representative individuals in the population by generating corresponding posterior predictions. As an application of the results, the posterior predictions can used for geometric validation of human body representations. It can also inform the future representations required for the population by identifying anthropometric ranges that are underrepresented or unrepresented in the body region of interest, for example, the female neck in the example above.
+The anthropometric measures  were compared for an average woman and man, as defined in a previous anthropometry recommendation for the US population [@Schneider1983]. Comparisons can also be made for other representative individuals in the population by generating corresponding posterior predictions. As an application of the results, the posterior predictions can used for geometric validation of human body representations. It can also inform the future representations required for the population by identifying anthropometric ranges that are underrepresented or unrepresented in the body region of interest, for example, the female neck in the example above.
 The role of anthropometric sex-differences on causality risks remains an open question. Mechanistic models (such as finite element human body models), that can represent sex-differences, can serve as causal models to investigate the influence of these differences in the future. As a preliminary study, this paper looked at gross neck anthropometric measures given the sex-differences previously reported for whiplash associated disorders [ ]. As future work, this analysis will be extended to all the other body regions to inform the ongoing development of human surrogates, both virtual and physical.
 
 ## References {.unnumbered}

@@ -1,6 +1,5 @@
 project:
   type: manuscript
-
 execute:
   freeze: auto
 
